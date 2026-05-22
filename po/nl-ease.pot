@@ -1,14 +1,14 @@
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
-# This file is distributed under the same license as the nl-ease package.
+# This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: nl-ease 1.0\n"
+"Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-04-30 13:37+0200\n"
+"POT-Creation-Date: 2026-05-22 13:30+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,26 +17,26 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: src/ui.c:76
+#: src/ui.c:118
 msgid "Enabled"
 msgstr ""
 
-#: src/ui.c:86
+#: src/ui.c:127
 msgid "Temperature"
 msgstr ""
 
-#: src/ui.c:94
+#: src/ui.c:135
 msgid "Start time:"
 msgstr ""
 
-#: src/ui.c:108
+#: src/ui.c:149
 msgid "End time:"
 msgstr ""
 
-#: src/ui.c:131
+#: src/ui.c:172
 msgid "Save Configuration"
 msgstr ""
 
-#: src/ui.c:138
+#: src/ui.c:179
 msgid "Close and Launch Daemon"
 msgstr ""
