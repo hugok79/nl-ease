@@ -2,7 +2,7 @@ PREFIX ?= /usr
 BINDIR = $(PREFIX)/bin
 DATADIR = $(PREFIX)/share
 APPDIR = $(DATADIR)/applications
-ICONDIR = $(DATADIR)/icons/hicolor/256x256/apps
+ICONDIR = $(DATADIR)/icons/hicolor/128x128/apps
 LOCALEDIR = $(DATADIR)/locale
 
 CC = gcc
