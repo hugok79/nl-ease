@@ -24,9 +24,6 @@ sudo apt install libefl-dev
 
 - **Uninstall:**  `sudo make uninstall`
 
- ### Notes: 
+ ### Note: 
 
-[1] Moksha users can also create a personal application launcher that runs the terminal command `nl-ease --daemon` and set it as a startup application. This automates the loading of the configuration file and eliminates the need to manually launch the daemon every time the system starts.
-
-[2] <ins>***work in progress. Use the app at your own risk***</ins>
-  
+Moksha users can also create a personal application launcher that runs the terminal command `nl-ease --daemon` and set it as a startup application. This automates the loading of the configuration file and eliminates the need to manually launch the daemon every time the system starts.
