@@ -1,0 +1,43 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR diekrz2
+# This file is distributed under the same license as the nl-ease package.
+# Hugo Carvalho <hugokarvalho@hotmail.com>, 2026.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: nl-ease 1.0\n"
+"Report-Msgid-Bugs-To: https://github.com/diekrz2/nl-ease/issues\n"
+"POT-Creation-Date: 2026-06-11 11:58+0200\n"
+"PO-Revision-Date: 2026-06-17 16:14+0100\n"
+"Last-Translator: Hugo Carvalho <hugokarvalho@hotmail.com>\n"
+"Language-Team: \n"
+"Language: pt\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Poedit 3.0.1\n"
+
+#: src/ui.c:123
+msgid "Enabled"
+msgstr "Ativada"
+
+#: src/ui.c:132
+msgid "Temperature"
+msgstr "Temperatura de cor"
+
+#: src/ui.c:140
+msgid "Start time:"
+msgstr "Hora de início:"
+
+#: src/ui.c:153
+msgid "End time:"
+msgstr "Hora de fim:"
+
+#: src/ui.c:175
+msgid "Save Configuration"
+msgstr "Gravar configuração"
+
+#: src/ui.c:182
+msgid "Close and Launch Daemon"
+msgstr "Fechar e iniciar o serviço"
