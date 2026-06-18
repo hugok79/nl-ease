@@ -8,6 +8,7 @@
 
 static Evas_Object *start_spinner;
 static Evas_Object *end_spinner;
+static Evas_Object *vlabel;
 
 static void
 kill_daemon(void)
@@ -19,13 +20,13 @@ kill_daemon(void)
              "pgrep -f 'nl-ease --daemon' | grep -v %d | xargs -r kill -TERM 2>/dev/null || true", 
              my_pid);
 
-    system(cmd);
+    ecore_exe_run(cmd, NULL);
     usleep(150000);  // 150ms
 
     snprintf(cmd, sizeof(cmd),
              "pgrep -f 'nl-ease --daemon' | grep -v %d | xargs -r kill -KILL 2>/dev/null || true", 
              my_pid);
-    system(cmd);
+    ecore_exe_run(cmd, NULL);
 
     printf("Daemon termination attempted.\n");
 }
@@ -49,8 +50,10 @@ static void
 on_slider_changed(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
     int visual_value = (int)elm_slider_value_get(obj);
-    int real_temperature = 9000 - visual_value;
-    logic_set_temperature(real_temperature);
+    char buf[20];
+    sprintf(buf, "%d", visual_value);
+    elm_object_text_set(vlabel, buf);
+    logic_set_temperature(visual_value);
 }
 
 static void
@@ -80,7 +83,7 @@ on_launch_daemon_clicked(void *data, Evas_Object *obj EINA_UNUSED, void *event_i
         evas_object_del(win);
 
     // launch daemon
-    system("nl-ease --daemon &");
+    ecore_exe_run("nl-ease --daemon &", NULL);
 
     printf("Daemon launched. Closing GUI...\n");
     elm_exit();
@@ -115,7 +118,7 @@ ui_init(void)
     Evas_Object *box = elm_box_add(win);
     evas_object_size_hint_weight_set(box, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
     elm_win_resize_object_add(win, box);
-    elm_box_padding_set(box, 0, 6);
+    //~ elm_box_padding_set(box, 0, 6);
     evas_object_show(box);
 
     // Toggle Enabled
@@ -126,14 +129,27 @@ ui_init(void)
     evas_object_show(toggle);
 
     // Temperature Slider 
+    
+    Evas_Object *hbox = elm_box_add(win);
+    elm_box_horizontal_set(hbox, EINA_TRUE);
+    elm_box_pack_end(box, hbox);
+    evas_object_show(hbox);
+    
     Evas_Object *slider = elm_slider_add(win);
     elm_slider_min_max_set(slider, 2500, 6500);
     elm_slider_value_set(slider, 4500);
     elm_object_text_set(slider, _("Temperature"));
     evas_object_smart_callback_add(slider, "changed", on_slider_changed, NULL);
+    elm_slider_indicator_show_set(slider, EINA_TRUE);
     evas_object_size_hint_min_set(slider, 220, -1);
-    elm_box_pack_end(box, slider);
+    elm_box_pack_end(hbox, slider);
     evas_object_show(slider);
+    
+    Evas_Object *label = elm_label_add(win);
+    elm_object_text_set(label, "4500");
+    vlabel = label;
+    evas_object_show(label);
+    elm_box_pack_end(hbox, label);
 
     // Start time
     Evas_Object *start_label = elm_label_add(win);
