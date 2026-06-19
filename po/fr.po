@@ -1,9 +1,8 @@
-# SOME DESCRIPTIVE TITLE.
-# Copyright (C) YEAR diekrz2
+# French translation for Nl-Ease.
+# Copyright (C) 2026 diekrz2
 # This file is distributed under the same license as the nl-ease package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# similar <similar@orange.fr>, 2026.
 #
-#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: nl-ease 1.0\n"
