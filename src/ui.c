@@ -59,6 +59,17 @@ read_daemon_pid(void)
     return pid;
 }
 
+static int
+daemon_running(void)
+{
+    pid_t pid = read_daemon_pid();
+
+    if (pid <= 0)
+        return 0;
+    // kill(pid,0) doesn't send signals
+    return (kill(pid, 0) == 0);
+}
+
 static void
 on_toggle_changed(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
@@ -105,14 +116,16 @@ on_launch_daemon_clicked(void *data, Evas_Object *obj EINA_UNUSED, void *event_i
     // first time config save
     logic_save();
 
-    Evas_Object *win = (Evas_Object *)data;
-    if (win)
-        evas_object_del(win);
-    
-    // launch daemon
-    ecore_exe_run("nl-ease --daemon", NULL);
+    if (!daemon_running())
+    {
+        ecore_exe_run("nl-ease --daemon", NULL);
+        printf("Daemon started.\n");
+    }
+    else
+    {
+        printf("Daemon already running.\n");
+    }
 
-    printf("Daemon launched. Closing GUI...\n");
     elm_exit();
 }
 
