@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: nl-ease 1.0\n"
 "Report-Msgid-Bugs-To: https://github.com/diekrz2/nl-ease/issues\n"
-"POT-Creation-Date: 2026-06-11 11:58+0200\n"
+"POT-Creation-Date: 2026-06-21 16:21+0200\n"
 "PO-Revision-Date: 2026-06-17 16:14+0100\n"
 "Last-Translator: Hugo Carvalho <hugokarvalho@hotmail.com>\n"
 "Language-Team: \n"
@@ -18,26 +18,26 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: Poedit 3.0.1\n"
 
-#: src/ui.c:123
+#: src/ui.c:152
 msgid "Enabled"
 msgstr "Ativada"
 
-#: src/ui.c:132
+#: src/ui.c:166
 msgid "Temperature"
 msgstr "Temperatura de cor"
 
-#: src/ui.c:140
+#: src/ui.c:181
 msgid "Start time:"
 msgstr "Hora de início:"
 
-#: src/ui.c:153
+#: src/ui.c:193
 msgid "End time:"
 msgstr "Hora de fim:"
 
-#: src/ui.c:175
+#: src/ui.c:214
 msgid "Save Configuration"
 msgstr "Gravar configuração"
 
-#: src/ui.c:182
+#: src/ui.c:220
 msgid "Close and Launch Daemon"
 msgstr "Fechar e iniciar o serviço"
