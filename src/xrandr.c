@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <locale.h>
+#include <unistd.h>
 #include <sys/wait.h>
 
 static char output_name[64] = {0};
@@ -18,22 +19,36 @@ static void detect_output(void)
     pclose(fp);
 }
 
-static int run_command(const char *cmd)
+static int
+run_xrandr(const char *output,
+           const char *gamma)
 {
-    if (!cmd) return -1;
+    pid_t pid = fork();
 
-    int status = system(cmd);
-    if (status == -1) {
-        perror("system() failed");
+    if (pid < 0)
+    {
+        perror("fork");
         return -1;
     }
 
-    if (WIFEXITED(status)) {
-        int ret = WEXITSTATUS(status);
-        if (ret != 0) {
-            fprintf(stderr, "Command exited with code %d: %s\n", ret, cmd);
-        }
+    if (pid == 0)
+    {
+        execlp("xrandr",
+               "xrandr",
+               "--output",
+               output,
+               "--gamma",
+               gamma,
+               NULL);
+
+        perror("execlp");
+        _exit(127);
     }
+
+    int status;
+
+    waitpid(pid, &status, 0);
+
     return status;
 }
 
@@ -50,7 +65,7 @@ void xrandr_set_temperature(int temp)
         return;
     }
 
-    char cmd[256];
+    char gamma[64];
     float ratio = (temp - 1000.0f) / (6500.0f - 1000.0f);
 
     if (ratio < 0) ratio = 0;
@@ -60,12 +75,12 @@ void xrandr_set_temperature(int temp)
     float g = 0.5f + 0.5f * ratio;
     float b = 0.2f + 0.8f * ratio * ratio;
 
-    snprintf(cmd, sizeof(cmd),
-             "xrandr --output %s --gamma %.2f:%.2f:%.2f",
-             output_name, r, g, b);
+    snprintf(gamma,
+             sizeof(gamma),
+             "%.2f:%.2f:%.2f",
+             r, g, b);
 
-    printf("CMD: %s\n", cmd);
-    run_command(cmd);
+    run_xrandr(output_name, gamma);
 }
 
 void xrandr_reset(void)
@@ -78,9 +93,5 @@ void xrandr_reset(void)
         return;
     }
 
-    char cmd[256];
-    snprintf(cmd, sizeof(cmd), "xrandr --output %s --gamma 1:1:1", output_name);
-
-    printf("CMD RESET: %s\n", cmd);
-    run_command(cmd);
+    run_xrandr(output_name, "1:1:1");
 }
