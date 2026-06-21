@@ -5,6 +5,7 @@
 #include <locale.h>
 #include <libintl.h>
 
+#include "instance_lock.h"
 #include "ui.h"
 #include "logic.h"
 
@@ -36,6 +37,9 @@ int main(int argc, char **argv)
     }
 
     // GUI
+    if (!lock_gui())
+        return 0;
+    
     elm_init(argc, argv);
 
     logic_init();
@@ -49,5 +53,6 @@ int main(int argc, char **argv)
     elm_run();
     elm_shutdown();
 
+    unlock_gui();
     return 0;
 }

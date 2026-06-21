@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: nl-ease\n"
 "Report-Msgid-Bugs-To: https://github.com/diekrz2/nl-ease/issues\n"
-"POT-Creation-Date: 2026-06-11 11:54+0200\n"
+"POT-Creation-Date: 2026-06-21 17:40+0200\n"
 "PO-Revision-Date: 2026-06-11 11:55+0200\n"
 "Last-Translator: diekrz2\n"
 "Language-Team: \n"
@@ -17,26 +17,26 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: src/ui.c:123
+#: src/ui.c:165
 msgid "Enabled"
 msgstr "Attiva"
 
-#: src/ui.c:132
+#: src/ui.c:179
 msgid "Temperature"
 msgstr "Tono"
 
-#: src/ui.c:140
+#: src/ui.c:194
 msgid "Start time:"
 msgstr "Ora inizio:"
 
-#: src/ui.c:153
+#: src/ui.c:206
 msgid "End time:"
 msgstr "Ora fine:"
 
-#: src/ui.c:175
+#: src/ui.c:227
 msgid "Save Configuration"
 msgstr "Salva Configurazione"
 
-#: src/ui.c:182
+#: src/ui.c:233
 msgid "Close and Launch Daemon"
 msgstr "Chiudi e Avvia il Daemon"

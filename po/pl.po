@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: nl-ease\n"
 "Report-Msgid-Bugs-To: https://github.com/diekrz2/nl-ease/issues\n"
-"POT-Creation-Date: 2026-06-11 11:58+0200\n"
+"POT-Creation-Date: 2026-06-21 17:40+0200\n"
 "PO-Revision-Date: 2026-06-11 12:00+0200\n"
 "Last-Translator: diekrz2\n"
 "Language-Team: \n"
@@ -18,26 +18,26 @@ msgstr ""
 "Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<12 "
 "|| n%100>14) ? 1 : 2);\n"
 
-#: src/ui.c:123
+#: src/ui.c:165
 msgid "Enabled"
 msgstr "Włączone"
 
-#: src/ui.c:132
+#: src/ui.c:179
 msgid "Temperature"
 msgstr "Intensywność"
 
-#: src/ui.c:140
+#: src/ui.c:194
 msgid "Start time:"
 msgstr "Czas rozpoczęcia:"
 
-#: src/ui.c:153
+#: src/ui.c:206
 msgid "End time:"
 msgstr "Czas końcowy:"
 
-#: src/ui.c:175
+#: src/ui.c:227
 msgid "Save Configuration"
 msgstr "Zapisz Konfigurację"
 
-#: src/ui.c:182
+#: src/ui.c:233
 msgid "Close and Launch Daemon"
 msgstr "Zamknij i Uruchom Demona"

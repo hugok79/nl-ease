@@ -14,7 +14,7 @@ static Eina_Bool daemon_timer_cb(void *data);
 static int       is_in_schedule(void);
 
 /* Internal Functions */
-
+ 
 static int
 is_in_schedule(void)
 {
@@ -104,6 +104,24 @@ logic_set_schedule(int start_hour, int end_hour)
     logic_save();
 }
 
+/* PID file creation */
+
+static const char *
+get_pid_path(void)
+{
+    static char path[256];
+    const char *home = getenv("HOME");
+
+    if (!home)
+        home = "/tmp";
+
+    snprintf(path, sizeof(path),
+             "%s/.config/nl-ease.pid",
+             home);
+
+    return path;
+}
+
 /* DAEMON */
 
 static Eina_Bool
@@ -129,11 +147,20 @@ logic_run_daemon(void)
     ecore_timer_add(15.0, daemon_timer_cb, NULL);
 
     printf("nl-ease daemon started (PID %d)\n", getpid());
+    
+    FILE *f = fopen(get_pid_path(), "w");
+    if (f)
+    {
+        fprintf(f, "%d\n", getpid());
+        fclose(f);
+    }
+    
     printf("Night light schedule: %02d:00 - %02d:00\n", state.start_hour, state.end_hour);
 
     ecore_main_loop_begin();
 
     printf("nl-ease daemon exiting. Resetting display...\n");
+    unlink(get_pid_path());
     xrandr_reset();
 }
 
@@ -171,16 +198,22 @@ logic_save(void)
     fclose(f);
 }
 
-void
-logic_load(void)
+void logic_load(void)
 {
     FILE *f = fopen(get_config_path(), "r");
     if (!f) return;
 
-    fscanf(f, "enabled=%d\n", &state.enabled);
-    fscanf(f, "temperature=%d\n", &state.temperature);
-    fscanf(f, "start=%d\n", &state.start_hour);
-    fscanf(f, "end=%d\n", &state.end_hour);
+    if (fscanf(f, " enabled=%d", &state.enabled) != 1)
+        state.enabled = 0;
+
+    if (fscanf(f, " temperature=%d", &state.temperature) != 1)
+        state.temperature = 4500;
+
+    if (fscanf(f, " start=%d", &state.start_hour) != 1)
+        state.start_hour = 22;
+
+    if (fscanf(f, " end=%d", &state.end_hour) != 1)
+        state.end_hour = 6;
 
     fclose(f);
 }

@@ -3,31 +3,71 @@
 #include <unistd.h>
 #include <Ecore.h>          
 #include "logic.h"
+#include <signal.h>
 
 #define _(String) gettext(String)
 
 static Evas_Object *start_spinner;
 static Evas_Object *end_spinner;
+static Evas_Object *vlabel;
+
+static pid_t read_daemon_pid(void);
+
+static Eina_Bool
+kill_force_cb(void *data EINA_UNUSED)
+{
+    pid_t pid = read_daemon_pid();
+    if (pid > 0)
+        kill(pid, SIGKILL);
+
+    return ECORE_CALLBACK_CANCEL;
+}
 
 static void
 kill_daemon(void)
 {
-    char cmd[256];
-    pid_t my_pid = getpid();
+    pid_t pid = read_daemon_pid();
 
-    snprintf(cmd, sizeof(cmd),
-             "pgrep -f 'nl-ease --daemon' | grep -v %d | xargs -r kill -TERM 2>/dev/null || true", 
-             my_pid);
+    if (pid > 0)
+        kill(pid, SIGTERM);
 
-    system(cmd);
-    usleep(150000);  // 150ms
-
-    snprintf(cmd, sizeof(cmd),
-             "pgrep -f 'nl-ease --daemon' | grep -v %d | xargs -r kill -KILL 2>/dev/null || true", 
-             my_pid);
-    system(cmd);
+    ecore_timer_add(0.15, kill_force_cb, NULL);
 
     printf("Daemon termination attempted.\n");
+}
+
+static pid_t
+read_daemon_pid(void)
+{
+    FILE *f;
+    pid_t pid = -1;
+    const char *home = getenv("HOME");
+
+    if (!home)
+        return -1;
+
+    char path[256];
+    snprintf(path, sizeof(path), "%s/.config/nl-ease.pid", home);
+
+    f = fopen(path, "r");
+    if (!f)
+        return -1;
+
+    fscanf(f, "%d", &pid);
+    fclose(f);
+
+    return pid;
+}
+
+static int
+daemon_running(void)
+{
+    pid_t pid = read_daemon_pid();
+
+    if (pid <= 0)
+        return 0;
+    // kill(pid,0) doesn't send signals
+    return (kill(pid, 0) == 0);
 }
 
 static void
@@ -49,8 +89,10 @@ static void
 on_slider_changed(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
     int visual_value = (int)elm_slider_value_get(obj);
-    int real_temperature = 9000 - visual_value;
-    logic_set_temperature(real_temperature);
+    char buf[20];
+    sprintf(buf, "%d", visual_value);
+    elm_object_text_set(vlabel, buf);
+    logic_set_temperature(visual_value);
 }
 
 static void
@@ -74,15 +116,16 @@ on_launch_daemon_clicked(void *data, Evas_Object *obj EINA_UNUSED, void *event_i
     // first time config save
     logic_save();
 
-    // close window
-    Evas_Object *win = (Evas_Object *)data;
-    if (win)
-        evas_object_del(win);
+    if (!daemon_running())
+    {
+        ecore_exe_run("nl-ease --daemon", NULL);
+        printf("Daemon started.\n");
+    }
+    else
+    {
+        printf("Daemon already running.\n");
+    }
 
-    // launch daemon
-    system("nl-ease --daemon &");
-
-    printf("Daemon launched. Closing GUI...\n");
     elm_exit();
 }
 
@@ -115,7 +158,6 @@ ui_init(void)
     Evas_Object *box = elm_box_add(win);
     evas_object_size_hint_weight_set(box, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
     elm_win_resize_object_add(win, box);
-    elm_box_padding_set(box, 0, 6);
     evas_object_show(box);
 
     // Toggle Enabled
@@ -125,17 +167,29 @@ ui_init(void)
     elm_box_pack_end(box, toggle);
     evas_object_show(toggle);
 
-    // Temperature Slider 
+    // Temperature Slider + Value
+    Evas_Object *hbox = elm_box_add(win);
+    elm_box_horizontal_set(hbox, EINA_TRUE);
+    elm_box_pack_end(box, hbox);
+    evas_object_show(hbox);
+    
     Evas_Object *slider = elm_slider_add(win);
     elm_slider_min_max_set(slider, 2500, 6500);
     elm_slider_value_set(slider, 4500);
     elm_object_text_set(slider, _("Temperature"));
     evas_object_smart_callback_add(slider, "changed", on_slider_changed, NULL);
+    elm_slider_indicator_show_set(slider, EINA_TRUE);
     evas_object_size_hint_min_set(slider, 220, -1);
-    elm_box_pack_end(box, slider);
+    elm_box_pack_end(hbox, slider);
     evas_object_show(slider);
+    
+    Evas_Object *label = elm_label_add(win);
+    elm_object_text_set(label, "4500");
+    vlabel = label;
+    evas_object_show(label);
+    elm_box_pack_end(hbox, label);
 
-    // Start time
+    // Start / End time 
     Evas_Object *start_label = elm_label_add(win);
     elm_object_text_set(start_label, _("Start time:"));
     elm_box_pack_end(box, start_label);
@@ -148,7 +202,6 @@ ui_init(void)
     elm_box_pack_end(box, start_spinner);
     evas_object_show(start_spinner);
 
-    // End time
     Evas_Object *end_label = elm_label_add(win);
     elm_object_text_set(end_label, _("End time:"));
     elm_box_pack_end(box, end_label);
@@ -161,7 +214,7 @@ ui_init(void)
     elm_box_pack_end(box, end_spinner);
     evas_object_show(end_spinner);
 
-    // Buttons container
+    // Buttons
     Evas_Object *btn_box = elm_box_add(win);
     elm_box_horizontal_set(btn_box, EINA_FALSE);
     elm_box_homogeneous_set(btn_box, EINA_TRUE);
@@ -170,31 +223,30 @@ ui_init(void)
     elm_box_pack_end(box, btn_box);
     evas_object_show(btn_box);
 
-    // Save Configuration
     Evas_Object *btn_save = elm_button_add(win);
     elm_object_text_set(btn_save, _("Save Configuration"));
     evas_object_smart_callback_add(btn_save, "clicked", on_save_clicked, NULL);
     elm_box_pack_end(btn_box, btn_save);
     evas_object_show(btn_save);
 
-    // Close and Launch Daemon
     Evas_Object *btn_daemon = elm_button_add(win);
     elm_object_text_set(btn_daemon, _("Close and Launch Daemon"));
     evas_object_smart_callback_add(btn_daemon, "clicked", on_launch_daemon_clicked, win);
     elm_box_pack_end(btn_box, btn_daemon);
     evas_object_show(btn_daemon);
 
-    // Sync UI with current state
+    // Sync UI
     AppState *s = logic_get_state();
     elm_check_state_set(toggle, s->enabled);
     
-    int visual_value = 9000 - s->temperature;
-    elm_slider_value_set(slider, visual_value);
+    elm_slider_value_set(slider, s->temperature);
+    char buf[16];
+    snprintf(buf, sizeof(buf), "%d", s->temperature);
+    elm_object_text_set(vlabel, buf);
     
     elm_spinner_value_set(start_spinner, s->start_hour);
     elm_spinner_value_set(end_spinner, s->end_hour);
 
-    // Handle window close with 'X'
     evas_object_smart_callback_add(win, "delete,request", on_win_delete, NULL);
 
     evas_object_show(win);
