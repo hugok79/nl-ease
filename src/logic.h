@@ -6,6 +6,7 @@ typedef struct {
     int temperature;
     int start_hour;
     int end_hour;
+    int use_12h;  // 0 = 24h, 1 = 12h 
 } AppState;
 
 void logic_init(void);
