@@ -68,6 +68,7 @@ logic_init(void)
     state.temperature = 4500;
     state.start_hour = 22;
     state.end_hour = 6;
+    state.use_12h = 0;
 
     logic_load();
     logic_apply();
@@ -194,6 +195,7 @@ logic_save(void)
     fprintf(f, "temperature=%d\n", state.temperature);
     fprintf(f, "start=%d\n", state.start_hour);
     fprintf(f, "end=%d\n", state.end_hour);
+    fprintf(f, "use_12h=%d\n", state.use_12h);
 
     fclose(f);
 }
@@ -214,6 +216,9 @@ void logic_load(void)
 
     if (fscanf(f, " end=%d", &state.end_hour) != 1)
         state.end_hour = 6;
+        
+    if (fscanf(f, " use_12h=%d", &state.use_12h) != 1)
+        state.use_12h = 0;
 
     fclose(f);
 }
