@@ -56,5 +56,14 @@ uninstall:
 		rm -f $(DESTDIR)$(LOCALEDIR)/$$lang/LC_MESSAGES/nl-ease.mo; \
 	done
 
+	@if [ -n "$(SUDO_USER)" ]; then \
+		USER_HOME=$$(getent passwd $(SUDO_USER) | cut -d: -f6); \
+	else \
+		USER_HOME=$$HOME; \
+	fi; \
+	rm -f "$$USER_HOME/.config/nl-ease.conf"; \
+	rm -f "$$USER_HOME/.config/nl-ease.lock"; \
+	rm -f "$$USER_HOME/.config/nl-ease.pid"
+
 clean:
 	rm -f $(TARGET) po/*.mo
